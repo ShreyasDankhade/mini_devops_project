@@ -1,4 +1,5 @@
 import os
+import time
 import boto3
 import pymysql
 import logging
@@ -9,29 +10,36 @@ logger.setLevel(logging.INFO)
 
 
 def read_data_from_s3(bucket_name, object_key):
-    """
-    Reads an object from S3 and returns its content as a string.
-    """
     s3 = boto3.client('s3')
     response = s3.get_object(Bucket=bucket_name, Key=object_key)
-    data = response['Body'].read().decode('utf-8')
-    return data
 
+    # Stream the file instead of reading all at once
+    data = []
+    for line in response['Body'].iter_lines():
+        data.append(line.decode('utf-8'))
+
+    return "\n".join(data)
 
 def push_data_to_rds(data):
     """
     Connects to an RDS database and inserts the provided data into the 'data_table' table.
-    Adjust the SQL query if your table structure is different.
     """
+    start_time = time.time()
+    logger.info("Connecting to RDS...")
+
     connection = pymysql.connect(
         host=os.environ['RDS_HOST'],
         user=os.environ['RDS_USER'],
         password=os.environ['RDS_PASSWORD'],
-        database=os.environ['RDS_DB']
+        database=os.environ['RDS_DB'],
+        connect_timeout=10  # Limit RDS connection time
     )
+
+    end_time = time.time()
+    logger.info(f"Connected to RDS in {end_time - start_time:.2f} seconds.")
+
     try:
         with connection.cursor() as cursor:
-            # Update the table name and column names as necessary
             sql = "INSERT INTO data_table (data) VALUES (%s)"
             cursor.execute(sql, (data,))
         connection.commit()
