@@ -4,7 +4,7 @@ provider "aws" {
 
 # S3 Bucket for Data Storage
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "my-s3-data-bucket"  # Ensure this name is unique
+  bucket = "go-digital-devops"  # Ensure this name is unique
 }
 
 # RDS Instance
