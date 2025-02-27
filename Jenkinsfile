@@ -1,52 +1,61 @@
 pipeline {
     agent any
+
     environment {
-        AWS_REGION = 'your-region'
-        AWS_ACCOUNT_ID = 'your_aws_account_id'
+        AWS_REGION = "us-east-1"
+        ECR_REPO = "s3-to-rds"
+        IMAGE_TAG = "latest"
+        AWS_ACCOUNT_ID = "920373006441"
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')   
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
+
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/your-username/s3-to-rds-pipeline.git'
+                git branch: 'main', url: 'https://github.com/ShreyasDankhade/go_digital_devops_project.git'
             }
         }
+
         stage('Terraform Init & Apply') {
             steps {
-                dir('terraform') {
-                    sh 'terraform init'
-                    sh 'terraform apply -auto-approve'
-                }
+                sh '''
+                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                terraform init
+                terraform apply -auto-approve
+                '''
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t s3-to-rds-app .'
-                sh 'docker tag s3-to-rds-app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds-app:latest'
+                sh '''
+                docker build -t s3-to-rds .
+                '''
             }
         }
-        stage('Push to ECR') {
+
+        stage('Push Docker Image to ECR') {
             steps {
                 sh '''
-                   aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-                   docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds-app:latest
-                   '''
+                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                docker tag s3-to-rds:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
+                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
+                '''
             }
         }
-        stage('Deploy Lambda') {
+
+        stage('Update Lambda Function') {
             steps {
-                // Optionally, trigger an update for your Lambda function via AWS CLI
                 sh '''
-                   aws lambda update-function-code --function-name s3-to-rds-lambda --image-uri $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds-app:latest
-                   '''
+                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                aws lambda update-function-code --function-name s3_to_rds_lambda --image-uri $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
+                '''
             }
-        }
-    }
-    post {
-        success {
-            echo 'Deployment completed successfully!'
-        }
-        failure {
-            echo 'Deployment failed. Please check the logs.'
         }
     }
 }
