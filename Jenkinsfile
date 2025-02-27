@@ -3,11 +3,9 @@ pipeline {
 
     environment {
         AWS_REGION = "us-east-1"
-        ECR_REPO = "s3-to-rds"
-        IMAGE_TAG = "latest"
         AWS_ACCOUNT_ID = "920373006441"
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')   
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUVXAPWKQY"   // Hardcoded Access Key
+        AWS_SECRET_ACCESS_KEY = "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"  // Hardcoded Secret Key
     }
 
     stages {
@@ -17,11 +15,20 @@ pipeline {
             }
         }
 
+        stage('Verify AWS Credentials') {
+            steps {
+                sh '''
+                echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+                echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+                '''
+            }
+        }
+
         stage('Terraform Init & Apply') {
             steps {
                 sh '''
-                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
                 terraform init
                 terraform apply -auto-approve
                 '''
@@ -39,11 +46,11 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 sh '''
-                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-                docker tag s3-to-rds:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
-                docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
+                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                docker tag s3-to-rds:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/s3-to-rds:latest
+                docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/s3-to-rds:latest
                 '''
             }
         }
@@ -51,9 +58,9 @@ pipeline {
         stage('Update Lambda Function') {
             steps {
                 sh '''
-                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                aws lambda update-function-code --function-name s3_to_rds_lambda --image-uri $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/s3-to-rds:$IMAGE_TAG
+                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                aws lambda update-function-code --function-name s3_to_rds_lambda --image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/s3-to-rds:latest
                 '''
             }
         }
