@@ -13,7 +13,7 @@ resource "aws_db_instance" "rds_instance" {
   allocated_storage    = 20  # Increased storage for better compatibility
   engine              = "mysql"
   engine_version      = "8.0"  # Specify a supported MySQL version
-  instance_class      = "db.t2.micro"
+  instance_class      = "db.t3.micro"
   username            = "admin"
   password            = "mypassword"  # Consider using a sensitive variable for security
   publicly_accessible  = true
