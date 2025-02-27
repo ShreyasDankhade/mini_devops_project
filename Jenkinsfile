@@ -60,3 +60,9 @@ pipeline {
                 sh '''
                 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
                 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                aws lambda update-function-code --function-name s3_to_rds_lambda --image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/s3-to-rds:latest
+                '''
+            }
+        }
+    }
+}
