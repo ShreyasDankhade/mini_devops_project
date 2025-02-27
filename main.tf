@@ -34,9 +34,9 @@ resource "aws_iam_role" "lambda_role" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Action": "sts:AssumeRole",
-      "Principal": { "Service": "lambda.amazonaws.com" },
-      "Effect": "Allow"
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "${aws_iam_role.lambda_role.arn}"
     }
   ]
 }
