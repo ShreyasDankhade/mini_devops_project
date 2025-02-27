@@ -27,21 +27,50 @@ resource "aws_ecr_repository" "ecr_repo" {
 
 # IAM Role for Lambda
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda_execution_role"
+ name = "lambda_execution_role"
 
-  assume_role_policy = <<EOF
+
+ assume_role_policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "iam:PassRole",
-      "Resource": "${aws_iam_role.lambda_role.arn}"
-    }
-  ]
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Action": "sts:AssumeRole",
+     "Principal": { "Service": "lambda.amazonaws.com" },
+     "Effect": "Allow"
+   }
+ ]
 }
 EOF
 }
+
+
+resource "aws_iam_policy" "lambda_policy" {
+ name        = "lambda_execution_policy"
+ description = "IAM policy for Lambda execution permissions"
+
+
+ policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Effect": "Allow",
+     "Action": [
+       "lambda:CreateFunction",
+       "iam:PassRole",
+       "s3:GetObject",
+       "logs:CreateLogGroup",
+       "logs:CreateLogStream",
+       "logs:PutLogEvents"
+     ],
+     "Resource": "*"
+   }
+ ]
+}
+EOF
+}
+
 
 # Attach the AWSLambdaBasicExecutionRole policy to the Lambda role
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
