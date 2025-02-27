@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_REGION = "us-east-1"
         AWS_ACCOUNT_ID = "920373006441"
-        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUVXAPWKQY"   // Hardcoded Access Key
+        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUVXAPWKQY"  // Hardcoded Access Key
         AWS_SECRET_ACCESS_KEY = "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"  // Hardcoded Secret Key
     }
 
@@ -60,9 +60,3 @@ pipeline {
                 sh '''
                 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
                 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-                aws lambda update-function-code --function-name s3_to_rds_lambda --image-uri ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/s3-to-rds:latest
-                '''
-            }
-        }
-    }
-}
