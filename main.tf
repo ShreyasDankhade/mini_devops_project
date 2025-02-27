@@ -4,7 +4,7 @@ provider "aws" {
 
 # S3 Bucket for Data Storage
 resource "aws_s3_bucket" "s3_bucket" {
-  bucket = "my-s3-data-bucket"
+  bucket = "my-s3-data-bucket"  # Ensure this name is unique
 }
 
 # RDS Instance
@@ -25,7 +25,7 @@ resource "aws_ecr_repository" "ecr_repo" {
   name = "s3-to-rds"
 }
 
-# IAM Role for Lambda (Root Role)
+# IAM Role for Lambda
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_execution_role"
 
@@ -49,7 +49,7 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_role.name
 }
 
-# Attach additional permissions to the Lambda role (root role)
+# Attach additional permissions to the Lambda role
 resource "aws_iam_role_policy_attachment" "lambda_full_access" {
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"  # Attach full access policy
   role       = aws_iam_role.lambda_role.name
