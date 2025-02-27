@@ -59,7 +59,6 @@ resource "aws_iam_role_policy_attachment" "lambda_full_access" {
 resource "aws_lambda_function" "lambda_function" {
   function_name    = "s3_to_rds_lambda"
   image_uri        = "${aws_ecr_repository.ecr_repo.repository_url}:latest"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambda_FullAccess"
   role             = aws_iam_role.lambda_role.arn
   package_type     = "Image"
   timeout          = 30
