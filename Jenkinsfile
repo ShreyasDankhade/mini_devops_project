@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "us-east-1"
+        AWS_REGION = "ap-south-1"
         AWS_ACCOUNT_ID = "920373006441"
-        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUVXAPWKQY"  // Hardcoded Access Key
-        AWS_SECRET_ACCESS_KEY = "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"  // Hardcoded Secret Key
+        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUWHAV7GH2"   // Hardcoded Access Key
+        AWS_SECRET_ACCESS_KEY = "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"  // Hardcoded Secret Key
     }
 
     stages {
