@@ -62,4 +62,5 @@ resource "aws_lambda_function" "lambda_function" {
   role             = aws_iam_role.lambda_role.arn
   package_type     = "Image"
   timeout          = 30
+  handler          = "lambda_function.handler"
 }
