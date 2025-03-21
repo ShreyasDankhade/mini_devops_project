@@ -2,16 +2,16 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "ap-south-1"
-        AWS_ACCOUNT_ID = "920373006441"
-        AWS_ACCESS_KEY_ID = "AKIA5MSUBSBUWHAV7GH2"  
-        AWS_SECRET_ACCESS_KEY = "WjtB4Rj73TkK2K4Xg43dZZTyeCAYCTDui28Jn8aZ"
+        AWS_REGION = "Add the region accordingly"
+        AWS_ACCOUNT_ID = "Add your Account Id"
+        AWS_ACCESS_KEY_ID = "Add your access key"  
+        AWS_SECRET_ACCESS_KEY = "Add your secret key"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/ShreyasDankhade/go_digital_devops_project.git'
+                git branch: 'main', url: 'https://github.com/UserName/RepoName'
             }
         }
 
