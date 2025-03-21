@@ -40,6 +40,8 @@ Ensure the following are installed and configured:
 
 ## ⚙️ Setup Instructions
 
+Please do a Code Review to make changes as per the requirement.
+
 ### 1. Infrastructure Provisioning with Terraform
 
 Terraform automates infrastructure creation on AWS.
