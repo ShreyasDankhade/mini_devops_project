@@ -1,6 +1,8 @@
 # 🚀 Mini DevOps Project
 
-This repository demonstrates a practical implementation of a DevOps pipeline by integrating Terraform, Docker, and Jenkins to deploy a Python web application seamlessly. It is designed to help users understand and practice basic DevOps workflows and infrastructure management concepts.
+This repository presents a practical implementation of a DevOps pipeline utilizing **Terraform**, **Docker**, and **Jenkins** to automate infrastructure provisioning and deployment workflows. The pipeline is configured to invoke an **AWS Lambda** _function_ through a **Python** script, which contains the core _logic_ of the Lambda function.
+
+The primary objective of this project is to provide users with a hands-on understanding of core DevOps principles, including infrastructure as code (IaC), continuous integration, and automation within the context of serverless architecture.
 
 ---
 
