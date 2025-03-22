@@ -103,11 +103,17 @@ docker run -d -p 5000:5000 mini_devops_app
 
 The provided `Jenkinsfile` automates the following workflow:
 
+
 - **Checkout**: Retrieves code from the repository.
+- **Access the AWS Account** -  Authenticates and establishes access to the AWS environment.
+- **Creates AWS S3 Bucket** - Provisions an S3 bucket for storing artifacts or other resources.
+- **Creates AWS RDS Instance** - Sets up an Amazon RDS instance for database management.
+- **Creates AWS ECR Repo** -  Creates an Amazon ECR repository to store Docker images.
 - **Build Docker Image**: Containerizes the application.
-- **Push Docker Image** (Optional): To a container registry like Docker Hub or AWS ECR.
+- **Push Docker Image to ECR rope**: To a container registry AWS ECR.
+- **Trigger AWS Lambda Function** - Triggers the Lambda Function.
 - **Terraform Deploy**: Provisions the necessary infrastructure on AWS and deploys the Docker container.
-- **Notification** (Optional): Configure notifications for pipeline success or failure.
+- **Notification** : Configure notifications for pipeline success or failure.
 
 ---
 
